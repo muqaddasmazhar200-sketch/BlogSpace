@@ -1,7 +1,8 @@
 
 import { Container, Row, Col, Card, Button , Form , Modal } from 'react-bootstrap'
 import { Link } from 'react-router'
-import { useState } from 'react'
+import { useState , useEffect } from 'react'
+import api from '../api/axios'
 
 const Dashboard = ({ blogs, setBlogs }) => {
 
@@ -11,44 +12,92 @@ const [editTitle, setEditTitle] = useState('')
 const [editContent, setEditContent] = useState('')
 const [editCategory, setEditCategory] = useState('')
 
-const handleEdit = (blog) => {
-  setEditId(blog.id)
-  setEditTitle(blog.title)
-  setEditCategory(blog.category)
-  setEditContent(blog.content)
-}
+ const handleEdit = (blog) => {
+    setEditId(blog.id);
+    setEditTitle(blog.title);
+    setEditCategory(blog.category);
+    setEditContent(blog.content);
+};
 
-const handleUpdate = () => {
-  const updatedBlogs = blogs.map((item) =>
-    item.id === editId
-      ? {
-          ...item,
-          title: editTitle,
-           category: editCategory,
-          content: editContent
-        }
-      : item
-  )
+ const handleUpdate = async () => {
+    try {
+        const response = await api.put(
+            `/blogs/${editId}`,
+            {
+                title: editTitle,
+                category: editCategory,
+                content: editContent
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            }
+        );
 
-  setBlogs(updatedBlogs)
-  setEditId(null)
-  setEditTitle('')
-  setEditContent('')
-}
+        setBlogs((prevBlogs) =>
+            prevBlogs.map((blog) =>
+                blog.id === editId ? response.data.blog : blog
+            )
+        );
 
+        setEditId(null);
+        setEditTitle('');
+        setEditCategory('');
+        setEditContent('');
+
+        alert(response.data.message);
+
+    } catch (error) {
+        alert(error.response?.data?.message || 'Blog update failed');
+    }
+};
  const countPublished = blogs.filter((item) => item.status === 'Published' );
  const countDraft = blogs.filter((item) => item.status === 'Draft');
  
-  const handleDelete = (id) => {
-  const confirmDelete = window.confirm(
-    'Are you sure you want to delete this blog?'
-  )
+ const handleDelete = async (id) => {
+    const confirmDelete = window.confirm(
+        'Are you sure you want to delete this blog?'
+    );
 
-  if (confirmDelete) {
-    const updatedBlogs = blogs.filter((item) => item.id !== id)
-    setBlogs(updatedBlogs)
-  }
-}
+    if (!confirmDelete) return;
+
+    try {
+        const response = await api.delete(`/blogs/${id}`, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+
+        setBlogs((prevBlogs) =>
+            prevBlogs.filter((blog) => blog.id !== id)
+        );
+
+        alert(response.data.message);
+
+    } catch (error) {
+        alert(error.response?.data?.message || 'Delete failed');
+    }
+};
+
+useEffect(() => {
+    const fetchBlogs = async () => {
+        try {
+            const response = await api.get('/blogs', {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            setBlogs(response.data.blogs);
+
+        } catch (error) {
+            console.error('Error fetching blogs:', error);
+        }
+    };
+
+    fetchBlogs();
+}, []);
 
   return (
     <>
@@ -163,38 +212,38 @@ const handleUpdate = () => {
     </Button>
   </div>
 ) : (
-  blogs.map((s) => (
-    <Card key={s.id} className="dashboard-card mb-3">
+  blogs.map((blog) => (
+    <Card key={blog.id} className="dashboard-card mb-3">
       <Card.Body>
        <Card.Body>
       <div className="d-flex justify-content-between align-items-start">
 
        
         <div>
-          <h5>{s.title}</h5>
+          <h5>{blog.title}</h5>
         <p className="text-primary mb-2">
-         {s.category}
+         {blog.category}
          </p>
 
           <p className="text-secondary">
-            {s.content}
+            {blog.content}
           </p>
 
-          <span className="badge bg-success">{s.status}</span>
+          <span className="badge bg-success">{blog.status}</span>
         </div>
 
        
         <div className="d-flex gap-2">
           <Button
             variant="primary"
-            onClick={() => handleEdit(s)}
+            onClick={() => handleEdit(blog)}
           >
             Edit
           </Button>
 
           <Button
             variant="danger"
-            onClick={() => handleDelete(s.id)}
+            onClick={() => handleDelete(blog.id)}
           >
             Delete
           </Button>

@@ -2,6 +2,8 @@
 import { Container, Row, Col, Form, Button } from 'react-bootstrap'
 import { Link } from 'react-router'
 import { useState } from 'react'
+import api from '../api/axios'
+
 
 const Register = () => {
   const [name, setName] = useState('')
@@ -9,7 +11,7 @@ const Register = () => {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault()
 
     if (password !== confirmPassword) {
@@ -17,12 +19,23 @@ const Register = () => {
       return
     }
 
-    alert('Account created successfully!')
+   try{
+    const response = await api.post('/auth/register', {
+    name,
+    email,
+    password
+});
+
+     alert(response.data.message);
 
     setName('')
     setEmail('')
     setPassword('')
     setConfirmPassword('')
+   }
+   catch (error) {
+    alert(error.response?.data?.message || 'Registration failed');
+}
   }
 
   return (

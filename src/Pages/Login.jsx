@@ -2,20 +2,35 @@
 import { useState } from 'react'
 import { Container, Row, Col, Form, Button } from 'react-bootstrap'
 import { Link } from 'react-router'
+import api from '../api/axios'
 
 const Login = () => {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    alert('Login form submitted successfully!')
+    try {
+        const response = await api.post('/auth/login', {
+            email,
+            password
+        });
 
-    setEmail('')
-    setPassword('')
-  }
+        alert(response.data.message);
+        
+        localStorage.setItem('token', response.data.token);
+        setEmail('')
+        setPassword('')
+      
+
+    } catch (error) {
+        alert(
+            error.response?.data?.message || 'Login failed'
+        );
+    }
+}
 
   return (
     <Container fluid className="auth-section py-5">

@@ -1,6 +1,7 @@
 
 import { Container, Row, Col, Form, Button } from 'react-bootstrap'
 import { useState } from 'react'
+import api from '../api/axios'
 
 const CreateBlog = ({ blogs, setBlogs }) => {
   const [title, setTitle] = useState('')
@@ -8,24 +9,32 @@ const CreateBlog = ({ blogs, setBlogs }) => {
   const [content, setContent] = useState('')
 
    
-const handleSubmit = (e) => {
-  e.preventDefault();
+const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const newBlog = {
-    id: Date.now(),
-    title: title,
-    category: category,
-    content: content,
-    status: 'Published'
-  };
+    try {
+        const response = await api.post(
+            '/blogs',
+            {
+                title,
+                category,
+                content
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            }
+        );
 
-  setBlogs([...blogs, newBlog]);
+        alert(response.data.message);
+        setTitle('')
+        setCategory('')
+        setContent('')
 
-  alert('Blog created successfully!');
-
-  setTitle('');
-  setCategory('');
-  setContent('');
+    } catch (error) {
+        alert(error.response?.data?.message || 'Blog creation failed');
+    }
 };
 
 
