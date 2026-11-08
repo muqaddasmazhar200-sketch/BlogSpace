@@ -1,22 +1,33 @@
-import { DataTypes } from 'sequelize';
-import sequelize from '../config/db.js';
+import mongoose from 'mongoose';
 
-const Blog = sequelize.define('Blog', {
+const blogSchema = new mongoose.Schema({
     title: {
-        type: DataTypes.STRING,
-        allowNull: false
+        type: String,
+        required: true,
+        trim: true
     },
     category: {
-        type: DataTypes.STRING
+        type: String,
+        default: 'General'
     },
     content: {
-        type: DataTypes.TEXT,
-        allowNull: false
+        type: String,
+        required: true
     },
     status: {
-        type: DataTypes.ENUM('Published', 'Draft'),
-        defaultValue: 'Published'
+        type: String,
+        enum: ['Published', 'Draft'],
+        default: 'Published'
+    },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     }
+}, {
+    timestamps: true
 });
+
+const Blog = mongoose.model('Blog', blogSchema);
 
 export default Blog;

@@ -13,9 +13,7 @@ import jwt from 'jsonwebtoken';
             });
         }
 
-        const existingUser = await User.findOne({
-            where: { email }
-        });
+        const existingUser = await User.findOne({ email });
 
         if (existingUser) {
             return res.status(409).json({
@@ -34,7 +32,7 @@ import jwt from 'jsonwebtoken';
         res.status(201).json({
             message: 'Registration successful',
             user: {
-                id: user.id,
+                id: user._id,
                 name: user.name,
                 email: user.email
             }
@@ -56,9 +54,7 @@ import jwt from 'jsonwebtoken';
             });
         }
 
-        const user = await User.findOne({
-            where: { email }
-        });
+       const user = await User.findOne({ email });
 
         if (!user) {
             return res.status(404).json({
@@ -75,7 +71,7 @@ import jwt from 'jsonwebtoken';
         }
 
         const token = jwt.sign(
-            { id: user.id, email: user.email },
+            { id: user._id, email: user.email },
             process.env.JWT_SECRET,
             { expiresIn: '7d' }
         );
@@ -84,7 +80,7 @@ import jwt from 'jsonwebtoken';
             message: 'Login successful',
             token,
             user: {
-                id: user.id,
+                id: user._id,
                 name: user.name,
                 email: user.email
             }

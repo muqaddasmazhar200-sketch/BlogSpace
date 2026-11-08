@@ -13,7 +13,7 @@ const [editContent, setEditContent] = useState('')
 const [editCategory, setEditCategory] = useState('')
 
  const handleEdit = (blog) => {
-    setEditId(blog.id);
+    setEditId(blog._id);
     setEditTitle(blog.title);
     setEditCategory(blog.category);
     setEditContent(blog.content);
@@ -37,7 +37,7 @@ const [editCategory, setEditCategory] = useState('')
 
         setBlogs((prevBlogs) =>
             prevBlogs.map((blog) =>
-                blog.id === editId ? response.data.blog : blog
+                blog._id === editId ? response.data.blog : blog
             )
         );
 
@@ -213,7 +213,7 @@ useEffect(() => {
   </div>
 ) : (
   blogs.map((blog) => (
-    <Card key={blog.id} className="dashboard-card mb-3">
+    <Card key={blog._id} className="dashboard-card mb-3">
       <Card.Body>
        <Card.Body>
       <div className="d-flex justify-content-between align-items-start">
@@ -243,10 +243,17 @@ useEffect(() => {
 
           <Button
             variant="danger"
-            onClick={() => handleDelete(blog.id)}
+            onClick={() => handleDelete(blog._id)}
           >
             Delete
           </Button>
+          <Button
+           as={Link}
+           to={`/blog/${blog._id}`}
+           variant="info"
+>
+           View Details
+             </Button>
         </div>
 
       </div>

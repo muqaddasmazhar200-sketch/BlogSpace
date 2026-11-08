@@ -9,6 +9,7 @@ import Login from "./Pages/Login";
 import Register from "./Pages/Register";
 import Dashboard from "./Pages/Dashboard";
 import CreateBlog from "./Pages/CreateBlog";
+import BlogDetails from "./Pages/BlogDetails";
 
 function App() {
 
@@ -53,6 +54,7 @@ function App() {
           path="/create-blog"
           element={<CreateBlog blogs={blogs} setBlogs={setBlogs} />}
         />
+        <Route path="/blog/:id" element={<BlogDetails />} />
       </Routes>
 
       <Footer />

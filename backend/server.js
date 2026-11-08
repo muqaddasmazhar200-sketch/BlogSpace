@@ -1,7 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
-import sequelize from './config/db.js'
+import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js'
 import './models/index.js'
 import blogRoutes from './routes/blogRoutes.js'
@@ -23,11 +23,7 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT || 5000;
 const startServer = async () => {
     try {
-        await sequelize.authenticate();
-        console.log('MySQL Database Connected');
-
-        await sequelize.sync({ alter: true });
-        console.log('Database Tables Created');
+       await connectDB();
 
         app.listen(PORT, () => {
             console.log(`Server running on port ${PORT}`);
