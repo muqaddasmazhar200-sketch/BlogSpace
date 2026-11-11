@@ -11,6 +11,19 @@ const Dashboard = ({ blogs, setBlogs }) => {
 const [editTitle, setEditTitle] = useState('')
 const [editContent, setEditContent] = useState('')
 const [editCategory, setEditCategory] = useState('')
+const [search, setSearch] = useState('');
+ const [selectedCategory, setSelectedCategory] = useState('');
+
+ const filteredBlogs = blogs.filter((blog) => {
+    const matchesSearch = blog.title
+        .toLowerCase()
+        .includes(search.toLowerCase());
+
+    const matchesCategory = selectedCategory === '' ||
+        blog.category === selectedCategory;
+
+    return matchesSearch && matchesCategory;
+});
 
  const handleEdit = (blog) => {
     setEditId(blog._id);
@@ -199,6 +212,29 @@ useEffect(() => {
 
 
         <h4 className="fw-bold mb-4">My Blogs</h4>
+        <Row className="mb-4">
+    <Col md={6}>
+        <Form.Control
+            type="text"
+            placeholder="Search blogs by title..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+        />
+    </Col>
+
+    <Col md={6}>
+        <Form.Select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+        >
+            <option value="">All Categories</option>
+            <option value="Technology">Technology</option>
+            <option value="Programming">Programming</option>
+            <option value="Education">Education</option>
+            <option value="Lifestyle">Lifestyle</option>
+        </Form.Select>
+    </Col>
+</Row>
          
 {blogs.length === 0 ? (
   <div className="text-center py-5">
@@ -211,8 +247,16 @@ useEffect(() => {
       + Create Your First Blog
     </Button>
   </div>
-) : (
-  blogs.map((blog) => (
+) :  filteredBlogs.length === 0 ? (
+  <div className="text-center py-5">
+    <h4 className="fw-bold">No Blogs Found!</h4>
+    <p className="text-secondary">
+      No blogs match your search or selected category.
+    </p>
+  </div>
+) : 
+ (
+  filteredBlogs.map((blog) => (
     <Card key={blog._id} className="dashboard-card mb-3">
       <Card.Body>
        <Card.Body>

@@ -6,6 +6,7 @@ const BlogDetails = () => {
     const { id } = useParams();
     const [blog, setBlog] = useState(null);
     const [loading, setLoading] = useState(true);
+    
 
     useEffect(() => {
         const fetchBlog = async () => {
@@ -27,16 +28,21 @@ setBlog(response.data.blog);
         fetchBlog();
     }, [id]);
 
+   
     if (loading) return <p>Loading...</p>;
     if (!blog) return <p>Blog not found.</p>;
 
     return (
-        <div className="container mt-5">
+        <>
+        <div className="container mt-5 pb-5">
             <h2>{blog.title}</h2>
             <p>{blog.category}</p>
             <p>{blog.content}</p>
             <small>{blog.status}</small>
         </div>
+
+       
+  </>
     );
 };
 
