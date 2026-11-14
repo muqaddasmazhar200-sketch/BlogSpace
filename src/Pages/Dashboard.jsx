@@ -213,7 +213,7 @@ useEffect(() => {
 
         <h4 className="fw-bold mb-4">My Blogs</h4>
         <Row className="mb-4">
-    <Col md={6}>
+    <Col md={6} className='mb-2'>
         <Form.Control
             type="text"
             placeholder="Search blogs by title..."

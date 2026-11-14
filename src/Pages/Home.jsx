@@ -9,7 +9,7 @@ const Home = () => {
       
 <Container fluid>
   <Container>
-    <Row className="align-items-center py-5 home-hero">
+    <Row className="align-items-center py-5 home-hero gy-4">
       <Col md={7}>
         <h1 className="display-4 fw-bold">
           Share Your Stories with the World
